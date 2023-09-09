@@ -10,6 +10,7 @@ export default class List extends Component {
             parr:[1],
             currPage:2,
             movies:[],
+            fm:[],
         };
 
         
@@ -81,11 +82,32 @@ let ans= await axios.get(
         currPage:pageNum,
       },this.changeMovie);
   }
+  handleFavourites=(movieObj)=>{
+    
+    let localStorageMovies=JSON.parse(localStorage.getItem("movies")) || [];
+
+    if(this.state.fm.includes(movieObj.id)){
+      localStorageMovies=localStorageMovies.filter(
+        (movie) => movie.id!=movieObj.id)
+
+    }
+    else{
+      localStorageMovies.push(movieObj);
+    }
+    
+    console.log(localStorageMovies);
+    localStorage.setItem("movies",JSON.stringify(localStorageMovies));
+    let tempData=localStorageMovies.map(movieObj=>movieObj.id);
+
+    this.setState({
+      fm:[...tempData]
+    });
+  }
   render() {
    // let movie=movies.results;
     return (
-     <>
-     {
+    <>
+    {
         this.state.movies.length==0 ? (
         <div className="spinner-border text-secondary" role="status">
              <span className="visually-hidden">Loading...</span>
@@ -101,56 +123,49 @@ let ans= await axios.get(
             <div className="movies-list"> {
                 this.state.movies.map((movieObj)=>(
                     <div className="card movie-card"
-                     onMouseEnter={()=>this.handleEnter(movieObj.id)} 
-                     onMouseLeave={this.handleLeave}
-                     >
+                    onMouseEnter={()=>this.handleEnter(movieObj.id)} 
+                    onMouseLeave={this.handleLeave}
+                    >
                     <img
-                           src={`https://image.tmdb.org/t/p/original/${movieObj.backdrop_path}`}
-                           className="card-img-top banner-img"
-                           alt="..."
-                           style={{height:"40vh"}}
+                          src={`https://image.tmdb.org/t/p/original/${movieObj.backdrop_path}`}
+                          className="card-img-top banner-img"
+                          alt="..."
+                          style={{height:"40vh"}}
                     />
                     {/*} <div className="card-body banner-title">*/}
-                       <h6 className="card-title movie-title">{movieObj.original_title}</h6>
-                     {/*  <p className="card-text movie-text">{movieObj.overview}</p>*/}
-                     <div className="button-wrapper">
+                      <h6 className="card-title movie-title">{movieObj.original_title}</h6>
+                    {/*  <p className="card-text movie-text">{movieObj.overview}</p>*/}
+                    <div className="button-wrapper">
                         {this.state.hover==movieObj.id && (
-                      <a href="#" className="btn btn-danger movie-button">Add To Favourites</a>
+                      <a className="btn btn-danger movie-button" onClick={()=>this.handleFavourites(movieObj)}>
+                    {this.state.fm.includes(movieObj.id)?"Remove from Favourites" : "Add to Favourites"}</a>
                         )}
-                     </div>
-                     </div>
+                    </div>
+                    </div>
                 ))}
                 </div>
-                <div className="pagination">
-                
-  <ul className="pagination">
-    <li className="page-item">
-      <a className="page-link"  aria-label="Previous" onClick={this.handlePrevious}>
-        <span aria-hidden="true">&laquo;</span>
-      </a>
-    </li>
-    {
-      this.state.parr.map(pageNum=>(
-        <li className="page-item">
-        <a className="page-link" onClick={()=>{this.handlePageNo(pageNum)}}>{pageNum}</a></li>
-      ))
-    }
-   
-    <li className="page-item">
-      <a className="page-link" aria-label="Next" onClick={this.handleNext} >
-        <span aria-hidden="true">&raquo;</span>
-      </a>
-    </li>
-  </ul>
-
-    </div>
+              <nav aria-label="Page navigation example" className="pagination">
+              <ul className="pagination">
+                <li className="page-item" onClick={this.handlePrevious}>
+                  <a className="page-link">Previous</a>
+                </li>
+                <li className="page-item">
+                  <a className="page-link">{this.state.currPage}</a>
+                </li>
+                <li className="page-item" onClick={this.handleNext}>
+                  <a className="page-link">Next</a>
+                </li>
+              </ul>
+            </nav>
+  
           </div>
-        )
-     }
         
-     
+        )
+    }
+        
     
-     </>
+    
+    </>
 
     );
   }

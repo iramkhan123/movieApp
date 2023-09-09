@@ -7,13 +7,21 @@ import Favourites from './Components/Favourites';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
+ 
   return (
     <BrowserRouter>
+     
       <Navbar/>
         <Routes>
-          <Route path="/" element={<List/>} />
+          <Route path="/" element={
+            <>
+            <Banner/>
+            <List/>
+            </>
+          } />
           <Route path="/fav" element={<Favourites/>} />
         </Routes>
+     
   
     </BrowserRouter>
   );

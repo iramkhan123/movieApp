@@ -8,7 +8,7 @@ export default class List extends Component {
         this.state={
             hover:"",
             parr:[1],
-            currPage:2,
+            currPage:1,
             movies:[],
             fm:[],
         };
